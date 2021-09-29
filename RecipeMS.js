@@ -1,8 +1,10 @@
 var express = require("express"),
     app = express(),
     bodyParser = require("body-parser"),
-    methodOverride = require("method-override"),
-    mongoose = require('mongoose');
+    methodOverride = require("method-override"),    
+    mongoose = require('mongoose'),
+    modelResources = require('./model/RecipesModel'),
+    recipeCreationController = require('./controllers/RecipeCreation');
 
 const connectionURL = 'mongodb://nodejsuser:Colombia1%2A@127.0.0.1:27017/';
 const databaseName = 'recipes?authSource=resources&gssapiServiceName=mongodb';
@@ -17,8 +19,8 @@ mongoose.connect(connectionURL + databaseName,
     });
 
 //middleware
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded());
 app.use(methodOverride());
 
 var router = express.Router();
@@ -28,9 +30,16 @@ var router = express.Router();
 router.get('/health', function (req, res) {
   res.send("{\"ok\":\"ok\"}");
 });
+
+// API routes
+var recipesServices = express.Router();
+recipesServices.route('/recipe')
+.post(recipeCreationController.addRecipe);
+
 app.use(router);
+app.use('/api',recipesServices);
 
 // Start server
-app.listen(3000, function () {
+app.listen(3001, function () {
     console.log("Node server running on http://localhost:3001");
   });

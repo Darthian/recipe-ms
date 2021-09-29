@@ -9,6 +9,7 @@ var recipeSchema = mongoose.Schema({
     totalIngredients: Number,
     description: String,
     imageUrl: String,
+    tags: [{ name: String }],
     ingredients: [
         {
             idProduct: String,
